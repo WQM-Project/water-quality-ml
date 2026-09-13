@@ -35,19 +35,20 @@ python notebooks/04_forecasting.py       # Train forecaster (needs 'prophet')
 ---
 
 ## Feature Selection
-An ablation study was conducted across 8 different feature combinations to determine the optimal sensor payload. The final model uses **6 independent features**:
+
+An ablation study was conducted across 8 different feature combinations to determine the optimal sensor payload. The final model uses **7 independent features**:
+
 - **pH** — Measures acidity/alkalinity. Irreplaceable indicator of chemical dumping.
 - **Turbidity (NTU)** — Measures suspended solids via optical sensor. Critical for physical pollution detection.
 - **Electrical Conductivity (µS/cm)** — Measures dissolved ion concentration. Most heavily weighted feature in the model.
 - **Dissolved Oxygen (mg/L)** — Most critical metric for aquatic life survivability.
 - **Chlorides (mg/L)** — Ablation study proved it contains unique chemical variance that improved accuracy by ~0.5%.
+- **ORP (mV)** — Oxidation-Reduction Potential measures the water's ability to break down dead organic matter and contaminants. Highly sensitive to sudden influxes of biological pollution.
 - **Temperature (°C)** — Influences chemical solubilities and biological activity. Provides crucial context for seasonal water quality variations.
 
-  
 **Dropped features:**
 - **TDS** — Perfect linear derivative of Conductivity (`TDS = EC × 0.65`). Added exactly 0.000% information gain.
 - **BOD & COD** — Used only to generate training labels. Dropped before model training to prevent data leakage.
-
 
 
 ---
