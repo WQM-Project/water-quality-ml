@@ -1,41 +1,57 @@
-# 🧠 Machine Learning — Water Quality Monitoring
+#  Water Quality Monitoring — Machine learning Models 
 
-> ML pipeline for the autonomous RC boat project. Handles real-time water quality classification and anomaly detection for the River Beas, Himachal Pradesh.
-
----
-
-
-
-## 🧠 Machine Learning
-
-### Why Machine Learning Over Standard Formulas?
-
-Traditional water quality assessment relies on the standard Water Quality Index (WQI) formula, which requires expensive laboratory parameters like BOD and COD. These tests take 3–5 days and cost thousands of rupees per sample. Our RC boat carries only low-cost electrochemical sensors (pH, Turbidity, EC, DO). Machine Learning allows the system to learn the historical relationship between these cheap sensor readings and the expensive lab results, enabling real-time water quality inference without a laboratory.
+> ML pipeline for the RC boat Water quality monitoring project. Handles real-time water quality classification and anomaly detection for the River.
 
 ---
 
-### Data Pipeline
 
-Five historical monitoring datasets from the River Beas (Kullu, Mandi, Nadaun, Hamirpur, Pong Dam) were merged into a single dataset of **124,225 rows**. The raw data underwent numeric conversion, null imputation (median filling), and quality label generation using BOD/COD/DO/pH thresholds defined by the Central Pollution Control Board (CPCB).
+## Why Machine Learning Over Standard Formulas?
+
+Traditional water quality assessment relies on the standard Water Quality Index (WQI) formula. While mathematically sound on paper, it completely fails in real-world, real-time autonomous deployments for two major reasons:
+
+1. **The "Virtual Laboratory":** The standard WQI requires expensive, laboratory-grade parameters like BOD (Biochemical Oxygen Demand) and COD, which take 3–5 days to process. Our RC boat only carries low-cost electrochemical sensors. Machine Learning acts as a "virtual laboratory," learning the historical relationships between cheap sensor data and expensive lab results, allowing us to infer lab-grade quality instantly, right on the water.
+2. **Complex River Ecosystems:** Mathematical formulas treat every parameter as a rigid, independent variable. In reality, rivers are complex. A rise in temperature changes how Dissolved Oxygen behaves; spikes in conductivity alter pH non-linearly. Machine Learning (specifically tree-based ensembles) inherently understands and maps these hidden, multidimensional relationships that standard WQI formulas completely miss.
 
 ---
 
-### Feature Selection
+## 🚀 Quick Start
 
-An ablation study was conducted across 8 different feature combinations to determine the optimal sensor payload. The final model uses **5 independent features**:
+### 1. Setup
+```bash
+cd water-quality-ml
+python -m venv venv
+venv\Scripts\activate          # Windows
+pip install -r requirements.txt
+```
 
+### 2. Train Models (run in order)
+```bash
+python notebooks/01_eda.py              # Data exploration & cleaning
+python notebooks/02_classification.py    # Train classifier
+python notebooks/03_anomaly_detection.py # Train anomaly detector
+python notebooks/04_forecasting.py       # Train forecaster (needs 'prophet')
+```
+
+---
+
+## Feature Selection
+An ablation study was conducted across 8 different feature combinations to determine the optimal sensor payload. The final model uses **6 independent features**:
 - **pH** — Measures acidity/alkalinity. Irreplaceable indicator of chemical dumping.
 - **Turbidity (NTU)** — Measures suspended solids via optical sensor. Critical for physical pollution detection.
 - **Electrical Conductivity (µS/cm)** — Measures dissolved ion concentration. Most heavily weighted feature in the model.
 - **Dissolved Oxygen (mg/L)** — Most critical metric for aquatic life survivability.
 - **Chlorides (mg/L)** — Ablation study proved it contains unique chemical variance that improved accuracy by ~0.5%.
+- **Temperature (°C)** — Influences chemical solubilities and biological activity. Provides crucial context for seasonal water quality variations.
 
+  
 **Dropped features:**
 - **TDS** — Perfect linear derivative of Conductivity (`TDS = EC × 0.65`). Added exactly 0.000% information gain.
-- **Temperature** — 98% of historical data was missing. Excluded from training but will be actively collected during live deployment by the DS18B20 sensor.
 - **BOD & COD** — Used only to generate training labels. Dropped before model training to prevent data leakage.
 
+
+
 ---
+
 
 ### Model 1: Water Quality Classification (XGBoost)
 
