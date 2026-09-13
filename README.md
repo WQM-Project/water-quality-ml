@@ -14,7 +14,7 @@ Traditional water quality assessment relies on the standard Water Quality Index 
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### 1. Setup
 ```bash
