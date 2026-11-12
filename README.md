@@ -47,7 +47,7 @@ An ablation study was conducted across 8 different feature combinations to deter
 - **Temperature (°C)** — Influences chemical solubilities and biological activity. Provides crucial context for seasonal water quality variations.
 
 **Dropped features:**
-- **TDS** — Perfect linear derivative of Conductivity (`TDS = EC × 0.65`). Added exactly 0.000% information gain.
+- **TDS** — Perfect linear derivative of Conductivity (`TDS = EC × 0.65`). Added exactly 0.000% information gain. *(Note: On the current active STM32 boat build, `TDS` (`tds_ppm`, SEN0244 calibrated at `K = 1.036f`), `pH`, `do_mgl` (BMP280 pressure-compensated), `orp_mv`, and `temp_w1` are active; `ec_uscm` can be derived from `tds_ppm / 0.5` when the dedicated EC probe is unfitted, and `turb_ntu` is optional.)*
 - **BOD & COD** — Used only to generate training labels. Dropped before model training to prevent data leakage.
 
 
